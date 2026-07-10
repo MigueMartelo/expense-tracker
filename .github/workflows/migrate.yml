@@ -1,0 +1,34 @@
+name: Database Migrations
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/src/prisma/**'
+      - '.github/workflows/migrate.yml'
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: .
+
+      - name: Run Prisma migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
+        run: npx prisma migrate deploy
