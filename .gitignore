@@ -4,3 +4,8 @@ node_modules
 /backend/dist
 /backend/node_modules
 /backend/.env
+
+# Personal RN learning notes — keep feature specs in plans/ tracked
+plans/00-overview.md
+plans/phase-00-scaffolding.md
+plans/lesson-*.md
