@@ -9,6 +9,7 @@ import {
   CreditCard,
   Tag,
   PiggyBank,
+  BarChart3,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -49,6 +50,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <>
                   <ThemeSwitcher />
                   <LanguageSwitcher />
+                  <Link to='/analytics'>
+                    <Button variant='ghost' size='sm' className='gap-2'>
+                      <BarChart3 className='w-4 h-4' />
+                      {t('analytics.title')}
+                    </Button>
+                  </Link>
                   <Link to='/credit-cards'>
                     <Button variant='ghost' size='sm' className='gap-2'>
                       <CreditCard className='w-4 h-4' />
@@ -116,6 +123,19 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       {user.email}
                     </p>
                   </div>
+                  <Link
+                    to='/analytics'
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      className='w-full gap-2 justify-center'
+                    >
+                      <BarChart3 className='w-4 h-4' />
+                      {t('analytics.title')}
+                    </Button>
+                  </Link>
                   <Link
                     to='/credit-cards'
                     onClick={() => setMobileMenuOpen(false)}

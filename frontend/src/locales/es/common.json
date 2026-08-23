@@ -181,6 +181,17 @@
     "createCategory": "Crear Categoría",
     "updateCategory": "Actualizar Categoría"
   },
+  "analytics": {
+    "title": "Análisis",
+    "subtitle": "Compara ingresos y gastos por mes",
+    "monthlyComparison": "Comparación mensual",
+    "range6": "Últimos 6 meses",
+    "range12": "Últimos 12 meses",
+    "rangeAll": "Todo el tiempo",
+    "vsPreviousMonth": "vs. mes anterior",
+    "netBalance": "Balance neto",
+    "noComparison": "Agrega transacciones en al menos dos meses para ver una comparación"
+  },
   "budget": {
     "title": "Presupuesto",
     "manageBudget": "Planifica tu presupuesto mensual con ítems por categoría.",
