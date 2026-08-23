@@ -19,6 +19,7 @@ import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedCreditCardsIndexRouteImport } from './routes/_authenticated/credit-cards/index'
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedBudgetIndexRouteImport } from './routes/_authenticated/budget/index'
+import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics/index'
 import { Route as AuthenticatedExpensesNewRouteImport } from './routes/_authenticated/expenses/new'
 import { Route as AuthenticatedExpensesHistoryRouteImport } from './routes/_authenticated/expenses/history'
 import { Route as AuthenticatedExpensesIdRouteImport } from './routes/_authenticated/expenses/$id'
@@ -76,6 +77,12 @@ const AuthenticatedBudgetIndexRoute =
     path: '/budget/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAnalyticsIndexRoute =
+  AuthenticatedAnalyticsIndexRouteImport.update({
+    id: '/analytics/',
+    path: '/analytics/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedExpensesNewRoute =
   AuthenticatedExpensesNewRouteImport.update({
     id: '/expenses/new',
@@ -103,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/expenses/history': typeof AuthenticatedExpensesHistoryRoute
   '/expenses/new': typeof AuthenticatedExpensesNewRoute
+  '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/budget': typeof AuthenticatedBudgetIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/credit-cards': typeof AuthenticatedCreditCardsIndexRoute
@@ -117,6 +125,7 @@ export interface FileRoutesByTo {
   '/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/expenses/history': typeof AuthenticatedExpensesHistoryRoute
   '/expenses/new': typeof AuthenticatedExpensesNewRoute
+  '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/budget': typeof AuthenticatedBudgetIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/credit-cards': typeof AuthenticatedCreditCardsIndexRoute
@@ -133,6 +142,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/_authenticated/expenses/history': typeof AuthenticatedExpensesHistoryRoute
   '/_authenticated/expenses/new': typeof AuthenticatedExpensesNewRoute
+  '/_authenticated/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/_authenticated/budget/': typeof AuthenticatedBudgetIndexRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
   '/_authenticated/credit-cards/': typeof AuthenticatedCreditCardsIndexRoute
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/expenses/$id'
     | '/expenses/history'
     | '/expenses/new'
+    | '/analytics'
     | '/budget'
     | '/categories'
     | '/credit-cards'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/expenses/$id'
     | '/expenses/history'
     | '/expenses/new'
+    | '/analytics'
     | '/budget'
     | '/categories'
     | '/credit-cards'
@@ -178,6 +190,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/$id'
     | '/_authenticated/expenses/history'
     | '/_authenticated/expenses/new'
+    | '/_authenticated/analytics/'
     | '/_authenticated/budget/'
     | '/_authenticated/categories/'
     | '/_authenticated/credit-cards/'
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBudgetIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/analytics/': {
+      id: '/_authenticated/analytics/'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AuthenticatedAnalyticsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/expenses/new': {
       id: '/_authenticated/expenses/new'
       path: '/expenses/new'
@@ -293,6 +313,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedExpensesIdRoute: typeof AuthenticatedExpensesIdRoute
   AuthenticatedExpensesHistoryRoute: typeof AuthenticatedExpensesHistoryRoute
   AuthenticatedExpensesNewRoute: typeof AuthenticatedExpensesNewRoute
+  AuthenticatedAnalyticsIndexRoute: typeof AuthenticatedAnalyticsIndexRoute
   AuthenticatedBudgetIndexRoute: typeof AuthenticatedBudgetIndexRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
   AuthenticatedCreditCardsIndexRoute: typeof AuthenticatedCreditCardsIndexRoute
@@ -303,6 +324,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedExpensesIdRoute: AuthenticatedExpensesIdRoute,
   AuthenticatedExpensesHistoryRoute: AuthenticatedExpensesHistoryRoute,
   AuthenticatedExpensesNewRoute: AuthenticatedExpensesNewRoute,
+  AuthenticatedAnalyticsIndexRoute: AuthenticatedAnalyticsIndexRoute,
   AuthenticatedBudgetIndexRoute: AuthenticatedBudgetIndexRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
   AuthenticatedCreditCardsIndexRoute: AuthenticatedCreditCardsIndexRoute,
