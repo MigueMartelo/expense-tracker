@@ -185,6 +185,9 @@
     "title": "Analytics",
     "subtitle": "Compare income and expenses across months",
     "monthlyComparison": "Monthly Comparison",
+    "categoryBreakdown": "Monthly expenses by category",
+    "uncategorized": "Uncategorized",
+    "noCategoryExpenses": "No expenses in this period",
     "range6": "Last 6 months",
     "range12": "Last 12 months",
     "rangeAll": "All time",
@@ -232,4 +235,3 @@
     "system": "System"
   }
 }
-
