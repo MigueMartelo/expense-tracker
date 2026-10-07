@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { expensesApi } from '@/lib/api';
 import {
   aggregateByMonth,
+  aggregateByMonthAndCategory,
   getMonthOverMonth,
   lastNMonths,
 } from '@/lib/analytics';
@@ -15,6 +16,7 @@ import {
   type AnalyticsRange,
 } from '@/components/analytics/RangeSelector';
 import { MonthlyComparisonChart } from '@/components/analytics/MonthlyComparisonChart';
+import { CategoryMonthlyChart } from '@/components/analytics/CategoryMonthlyChart';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -34,6 +36,19 @@ function AnalyticsPage() {
   const buckets = useMemo(() => aggregateByMonth(expenses ?? []), [expenses]);
   const visible = useMemo(() => lastNMonths(buckets, range), [buckets, range]);
   const delta = useMemo(() => getMonthOverMonth(buckets), [buckets]);
+  const categoryData = useMemo(() => {
+    const result = aggregateByMonthAndCategory(
+      expenses ?? [],
+      t('analytics.uncategorized')
+    );
+    const visibleMonthKeys = new Set(visible.map((month) => month.key));
+    const months = result.months.filter((month) => visibleMonthKeys.has(month.key));
+    const categoryKeys = new Set(months.flatMap((month) => Object.keys(month.amounts)));
+    return {
+      months,
+      categories: result.categories.filter((category) => categoryKeys.has(category.key)),
+    };
+  }, [expenses, range, t, visible]);
 
   if (isLoading) {
     return (
@@ -89,6 +104,24 @@ function AnalyticsPage() {
                 {t('analytics.monthlyComparison')}
               </h2>
               <MonthlyComparisonChart data={visible} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className='p-4 md:p-6 space-y-4'>
+              <h2 className='text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'>
+                {t('analytics.categoryBreakdown')}
+              </h2>
+              {categoryData.months.length > 0 ? (
+                <CategoryMonthlyChart
+                  data={categoryData.months}
+                  categories={categoryData.categories}
+                />
+              ) : (
+                <p className='py-8 text-center text-sm text-slate-500 dark:text-slate-400'>
+                  {t('analytics.noCategoryExpenses')}
+                </p>
+              )}
             </CardContent>
           </Card>
         </>

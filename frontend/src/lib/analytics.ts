@@ -10,6 +10,69 @@ export interface MonthlyBucket {
   balance: number;
 }
 
+export interface CategoryMonthlyBucket {
+  key: string;
+  label: string;
+  year: number;
+  month: number;
+  amounts: Record<string, number>;
+}
+
+export interface CategorySeries {
+  key: string;
+  name: string;
+  color: string;
+}
+
+export interface CategoryMonthlyData {
+  months: CategoryMonthlyBucket[];
+  categories: CategorySeries[];
+}
+
+const UNCATEGORIZED_KEY = 'uncategorized';
+const UNCATEGORIZED_COLOR = '#94a3b8';
+
+export function aggregateByMonthAndCategory(
+  expenses: Expense[],
+  uncategorizedLabel: string
+): CategoryMonthlyData {
+  const months = new Map<string, CategoryMonthlyBucket>();
+  const categories = new Map<string, CategorySeries>();
+
+  for (const expense of expenses) {
+    if (expense.type !== ExpenseType.OUTCOME) continue;
+
+    const monthKey = getMonthKey(expense.date);
+    const [year, month] = monthKey.split('-').map(Number);
+    const categoryKey = expense.categoryId ?? UNCATEGORIZED_KEY;
+    const category = expense.category;
+
+    if (!categories.has(categoryKey)) {
+      categories.set(categoryKey, {
+        key: categoryKey,
+        name: category?.name ?? uncategorizedLabel,
+        color: category?.color ?? UNCATEGORIZED_COLOR,
+      });
+    }
+
+    const bucket = months.get(monthKey) ?? {
+      key: monthKey,
+      label: monthKey,
+      year,
+      month,
+      amounts: {},
+    };
+    bucket.amounts[categoryKey] =
+      (bucket.amounts[categoryKey] ?? 0) + Number(expense.amount);
+    months.set(monthKey, bucket);
+  }
+
+  return {
+    months: [...months.values()].sort((a, b) => a.key.localeCompare(b.key)),
+    categories: [...categories.values()],
+  };
+}
+
 export interface MonthOverMonthDelta {
   current: MonthlyBucket;
   previous: MonthlyBucket;

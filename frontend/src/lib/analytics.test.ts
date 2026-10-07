@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ExpenseType, type Expense } from '../types';
 import {
   aggregateByMonth,
+  aggregateByMonthAndCategory,
   getMonthKey,
   getMonthOverMonth,
   lastNMonths,
@@ -109,6 +110,67 @@ describe('aggregateByMonth', () => {
     ];
 
     expect(aggregateByMonth(expenses)[0].balance).toBe(-150);
+  });
+});
+
+describe('aggregateByMonthAndCategory', () => {
+  it('groups outcome amounts by month and category and excludes income', () => {
+    const groceries = {
+      id: 'category-1', userId: 'user-1', name: 'Groceries', color: '#22c55e',
+      textColor: '#fff', createdAt: '', updatedAt: '',
+    };
+    const result = aggregateByMonthAndCategory([
+      makeExpense({
+        type: ExpenseType.OUTCOME,
+        amount: 25,
+        date: '2026-02-01T00:00:00.000Z',
+        categoryId: groceries.id,
+        category: groceries,
+      }),
+      makeExpense({
+        type: ExpenseType.OUTCOME,
+        amount: '15' as unknown as number,
+        date: '2026-02-12T00:00:00.000Z',
+        categoryId: groceries.id,
+        category: groceries,
+      }),
+      makeExpense({
+        type: ExpenseType.INCOME,
+        amount: 100,
+        date: '2026-02-15T00:00:00.000Z',
+        categoryId: groceries.id,
+        category: groceries,
+      }),
+    ], 'Uncategorized');
+
+    expect(result.months).toHaveLength(1);
+    expect(result.months[0].amounts).toEqual({ [groceries.id]: 40 });
+    expect(result.categories).toEqual([
+      { key: groceries.id, name: 'Groceries', color: '#22c55e' },
+    ]);
+  });
+
+  it('groups expenses without a category under the uncategorized series', () => {
+    const result = aggregateByMonthAndCategory([
+      makeExpense({
+        type: ExpenseType.OUTCOME,
+        amount: 12,
+        date: '2026-01-03T00:00:00.000Z',
+      }),
+      makeExpense({
+        type: ExpenseType.OUTCOME,
+        amount: 8,
+        date: '2026-03-03T00:00:00.000Z',
+      }),
+    ], 'Uncategorized');
+
+    expect(result.months.map(({ key, amounts }) => ({ key, amounts }))).toEqual([
+      { key: '2026-01', amounts: { uncategorized: 12 } },
+      { key: '2026-03', amounts: { uncategorized: 8 } },
+    ]);
+    expect(result.categories).toEqual([
+      { key: 'uncategorized', name: 'Uncategorized', color: '#94a3b8' },
+    ]);
   });
 });
 

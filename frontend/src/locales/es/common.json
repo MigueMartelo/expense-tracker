@@ -185,6 +185,9 @@
     "title": "Análisis",
     "subtitle": "Compara ingresos y gastos por mes",
     "monthlyComparison": "Comparación mensual",
+    "categoryBreakdown": "Gastos mensuales por categoría",
+    "uncategorized": "Sin categoría",
+    "noCategoryExpenses": "No hay gastos en este período",
     "range6": "Últimos 6 meses",
     "range12": "Últimos 12 meses",
     "rangeAll": "Todo el tiempo",
@@ -232,4 +235,3 @@
     "system": "Sistema"
   }
 }
-
