@@ -42,6 +42,7 @@ import {
   X,
   CreditCard as CreditCardIcon,
   Tag,
+  Plus,
 } from 'lucide-react';
 import type { DateRange } from 'react-day-picker';
 import { useTranslation } from 'react-i18next';
@@ -252,19 +253,33 @@ function HistoryPage() {
   return (
     <div className='container mx-auto px-4 py-4 md:py-6 space-y-4 md:space-y-6 pb-20'>
       {/* Header */}
-      <div className='flex items-center gap-3'>
-        <Link to='/expenses'>
+      <div className='flex items-center justify-between gap-3'>
+        <div className='flex min-w-0 items-center gap-3'>
+          <Link to='/expenses'>
+            <Button
+              variant='ghost'
+              size='icon'
+              className='shrink-0 h-11 w-11 sm:h-9 sm:w-9'
+            >
+              <ArrowLeft className='w-5 h-5' />
+            </Button>
+          </Link>
+          <h1 className='truncate text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100'>
+            {t('expenses.transactionHistory')}
+          </h1>
+        </div>
+        <Link to='/expenses/new' search={{ fromHistory: true }}>
           <Button
-            variant='ghost'
-            size='icon'
-            className='shrink-0 h-11 w-11 sm:h-9 sm:w-9'
+            size='sm'
+            className='h-11 w-11 p-0 sm:h-9 sm:w-auto sm:px-3'
+            aria-label={t('expenses.addTransaction')}
           >
-            <ArrowLeft className='w-5 h-5' />
+            <Plus className='w-4 h-4' />
+            <span className='hidden sm:inline'>
+              {t('expenses.addTransaction')}
+            </span>
           </Button>
         </Link>
-        <h1 className='text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100'>
-          {t('expenses.transactionHistory')}
-        </h1>
       </div>
 
       {/* Filters Section */}
