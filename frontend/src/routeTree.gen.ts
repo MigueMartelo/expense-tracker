@@ -9,34 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses/index'
-import { Route as AuthenticatedCreditCardsIndexRouteImport } from './routes/_authenticated/credit-cards/index'
-import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
-import { Route as AuthenticatedBudgetIndexRouteImport } from './routes/_authenticated/budget/index'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics/index'
-import { Route as AuthenticatedExpensesNewRouteImport } from './routes/_authenticated/expenses/new'
-import { Route as AuthenticatedExpensesHistoryRouteImport } from './routes/_authenticated/expenses/history'
+import { Route as AuthenticatedBudgetIndexRouteImport } from './routes/_authenticated/budget/index'
+import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
+import { Route as AuthenticatedCreditCardsIndexRouteImport } from './routes/_authenticated/credit-cards/index'
+import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses/index'
 import { Route as AuthenticatedExpensesIdRouteImport } from './routes/_authenticated/expenses/$id'
+import { Route as AuthenticatedExpensesHistoryRouteImport } from './routes/_authenticated/expenses/history'
+import { Route as AuthenticatedExpensesNewRouteImport } from './routes/_authenticated/expenses/new'
 
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -44,31 +38,25 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedExpensesIndexRoute =
-  AuthenticatedExpensesIndexRouteImport.update({
-    id: '/expenses/',
-    path: '/expenses/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedCreditCardsIndexRoute =
-  AuthenticatedCreditCardsIndexRouteImport.update({
-    id: '/credit-cards/',
-    path: '/credit-cards/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedCategoriesIndexRoute =
-  AuthenticatedCategoriesIndexRouteImport.update({
-    id: '/categories/',
-    path: '/categories/',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAnalyticsIndexRoute =
+  AuthenticatedAnalyticsIndexRouteImport.update({
+    id: '/analytics/',
+    path: '/analytics/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedBudgetIndexRoute =
@@ -77,10 +65,33 @@ const AuthenticatedBudgetIndexRoute =
     path: '/budget/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedAnalyticsIndexRoute =
-  AuthenticatedAnalyticsIndexRouteImport.update({
-    id: '/analytics/',
-    path: '/analytics/',
+const AuthenticatedCategoriesIndexRoute =
+  AuthenticatedCategoriesIndexRouteImport.update({
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCreditCardsIndexRoute =
+  AuthenticatedCreditCardsIndexRouteImport.update({
+    id: '/credit-cards/',
+    path: '/credit-cards/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedExpensesIndexRoute =
+  AuthenticatedExpensesIndexRouteImport.update({
+    id: '/expenses/',
+    path: '/expenses/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedExpensesIdRoute = AuthenticatedExpensesIdRouteImport.update({
+  id: '/expenses/$id',
+  path: '/expenses/$id',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedExpensesHistoryRoute =
+  AuthenticatedExpensesHistoryRouteImport.update({
+    id: '/expenses/history',
+    path: '/expenses/history',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedExpensesNewRoute =
@@ -89,17 +100,6 @@ const AuthenticatedExpensesNewRoute =
     path: '/expenses/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedExpensesHistoryRoute =
-  AuthenticatedExpensesHistoryRouteImport.update({
-    id: '/expenses/history',
-    path: '/expenses/history',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedExpensesIdRoute = AuthenticatedExpensesIdRouteImport.update({
-  id: '/expenses/$id',
-  path: '/expenses/$id',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,11 +110,11 @@ export interface FileRoutesByFullPath {
   '/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/expenses/history': typeof AuthenticatedExpensesHistoryRoute
   '/expenses/new': typeof AuthenticatedExpensesNewRoute
-  '/analytics': typeof AuthenticatedAnalyticsIndexRoute
-  '/budget': typeof AuthenticatedBudgetIndexRoute
-  '/categories': typeof AuthenticatedCategoriesIndexRoute
-  '/credit-cards': typeof AuthenticatedCreditCardsIndexRoute
-  '/expenses': typeof AuthenticatedExpensesIndexRoute
+  '/analytics/': typeof AuthenticatedAnalyticsIndexRoute
+  '/budget/': typeof AuthenticatedBudgetIndexRoute
+  '/categories/': typeof AuthenticatedCategoriesIndexRoute
+  '/credit-cards/': typeof AuthenticatedCreditCardsIndexRoute
+  '/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -159,11 +159,11 @@ export interface FileRouteTypes {
     | '/expenses/$id'
     | '/expenses/history'
     | '/expenses/new'
-    | '/analytics'
-    | '/budget'
-    | '/categories'
-    | '/credit-cards'
-    | '/expenses'
+    | '/analytics/'
+    | '/budget/'
+    | '/categories/'
+    | '/credit-cards/'
+    | '/expenses/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -208,25 +208,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -236,60 +229,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthenticatedRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/expenses/': {
-      id: '/_authenticated/expenses/'
-      path: '/expenses'
-      fullPath: '/expenses'
-      preLoaderRoute: typeof AuthenticatedExpensesIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/credit-cards/': {
-      id: '/_authenticated/credit-cards/'
-      path: '/credit-cards'
-      fullPath: '/credit-cards'
-      preLoaderRoute: typeof AuthenticatedCreditCardsIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/categories/': {
-      id: '/_authenticated/categories/'
-      path: '/categories'
-      fullPath: '/categories'
-      preLoaderRoute: typeof AuthenticatedCategoriesIndexRouteImport
+    '/_authenticated/analytics/': {
+      id: '/_authenticated/analytics/'
+      path: '/analytics'
+      fullPath: '/analytics/'
+      preLoaderRoute: typeof AuthenticatedAnalyticsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/budget/': {
       id: '/_authenticated/budget/'
       path: '/budget'
-      fullPath: '/budget'
+      fullPath: '/budget/'
       preLoaderRoute: typeof AuthenticatedBudgetIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/analytics/': {
-      id: '/_authenticated/analytics/'
-      path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AuthenticatedAnalyticsIndexRouteImport
+    '/_authenticated/categories/': {
+      id: '/_authenticated/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof AuthenticatedCategoriesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/expenses/new': {
-      id: '/_authenticated/expenses/new'
-      path: '/expenses/new'
-      fullPath: '/expenses/new'
-      preLoaderRoute: typeof AuthenticatedExpensesNewRouteImport
+    '/_authenticated/credit-cards/': {
+      id: '/_authenticated/credit-cards/'
+      path: '/credit-cards'
+      fullPath: '/credit-cards/'
+      preLoaderRoute: typeof AuthenticatedCreditCardsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/expenses/': {
+      id: '/_authenticated/expenses/'
+      path: '/expenses'
+      fullPath: '/expenses/'
+      preLoaderRoute: typeof AuthenticatedExpensesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/expenses/$id': {
+      id: '/_authenticated/expenses/$id'
+      path: '/expenses/$id'
+      fullPath: '/expenses/$id'
+      preLoaderRoute: typeof AuthenticatedExpensesIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/expenses/history': {
@@ -299,11 +299,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExpensesHistoryRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/expenses/$id': {
-      id: '/_authenticated/expenses/$id'
-      path: '/expenses/$id'
-      fullPath: '/expenses/$id'
-      preLoaderRoute: typeof AuthenticatedExpensesIdRouteImport
+    '/_authenticated/expenses/new': {
+      id: '/_authenticated/expenses/new'
+      path: '/expenses/new'
+      fullPath: '/expenses/new'
+      preLoaderRoute: typeof AuthenticatedExpensesNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }

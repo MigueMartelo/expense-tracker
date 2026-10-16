@@ -10,11 +10,15 @@ import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export const Route = createFileRoute('/_authenticated/expenses/new')({
+  validateSearch: (search: Record<string, unknown>) => ({
+    fromHistory: search.fromHistory === true,
+  }),
   component: NewExpensePage,
 });
 
 function NewExpensePage() {
   const { t } = useTranslation();
+  const { fromHistory } = Route.useSearch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -23,7 +27,7 @@ function NewExpensePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
       toast.success(t('expenses.transactionAdded'));
-      navigate({ to: '/expenses' });
+      navigate({ to: fromHistory ? '/expenses/history' : '/expenses' });
     },
     onError: (error: Error) => {
       toast.error(error.message || t('expenses.createFailed'));
@@ -37,9 +41,12 @@ function NewExpensePage() {
   return (
     <div className='container mx-auto px-4 py-4 md:py-6 max-w-lg'>
       {/* Back Button */}
-      <Link to='/expenses' className='inline-flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 mb-4 min-h-[44px]'>
+      <Link
+        to={fromHistory ? '/expenses/history' : '/expenses'}
+        className='inline-flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 mb-4 min-h-[44px]'
+      >
         <ArrowLeft className='w-4 h-4' />
-        {t('expenses.backToDashboard')}
+        {t(fromHistory ? 'expenses.backToHistory' : 'expenses.backToDashboard')}
       </Link>
 
       <Card className='shadow-lg'>

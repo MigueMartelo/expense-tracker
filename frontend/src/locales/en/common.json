@@ -84,6 +84,7 @@
     "allTransactions": "All Transactions",
     "filterByType": "Filter by type",
     "backToDashboard": "Back to Dashboard",
+    "backToHistory": "Back to History",
     "transactionNotFound": "Transaction not found",
     "transactionUpdated": "Transaction updated successfully",
     "transactionDeleted": "Transaction deleted",
