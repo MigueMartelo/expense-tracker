@@ -13,6 +13,21 @@
       "data": "ExpenseTrackerStack.template.json"
     }
   ],
+  "/ExpenseTrackerStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:62:5)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    }
+  ],
   "/ExpenseTrackerStack/BootstrapVersion": [
     {
       "type": "aws:cdk:logicalId",
@@ -48,7 +63,71 @@
       "type": "aws:cdk:creationStack",
       "data": [
         "...new Repository2 in aws-cdk-lib...",
-        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:11:18)",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:17:18)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/ApiLogs/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiLogs3D05D88B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new LogGroup2 in aws-cdk-lib...",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:26:22)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/ApiFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiFunctionCE271BD4"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:31:17)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/ApiFunction/invoke-function-url": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiFunctioninvokefunctionurl0B8A0798"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...PropertyInjectable.addFunctionUrl in aws-cdk-lib...",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:58:21)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/ApiFunction/invoke-function": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiFunctioninvokefunctionB5A175E4"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...PropertyInjectable.addFunctionUrl in aws-cdk-lib...",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:58:21)",
         "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
         "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
         "...node internals, tsx..."
@@ -65,6 +144,54 @@
       "data": [
         "...aws-cdk-lib, node internals...",
         "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/ApiFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiFunctionServiceRole52B9747B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:31:17)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/ApiFunction/FunctionUrl/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiFunctionFunctionUrl73AD62DC"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...PropertyInjectable.addFunctionUrl in aws-cdk-lib...",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:58:21)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/ApiFunction/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiFunctionServiceRoleDefaultPolicy20A32B8D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...PropertyInjectable.addToRolePolicy in aws-cdk-lib...",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:46:9)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals..."
       ]
     }
   ]
