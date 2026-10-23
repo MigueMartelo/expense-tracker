@@ -1,0 +1,71 @@
+{
+  "/ExpenseTrackerStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    },
+    {
+      "type": "aws:cdk:templateFile",
+      "data": "ExpenseTrackerStack.template.json"
+    }
+  ],
+  "/ExpenseTrackerStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/ApiRepo/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiRepoEFA7BA97"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Repository2 in aws-cdk-lib...",
+        "new ExpenseStack (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/lib/expense-stack.ts:11:18)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:6:1)",
+        "<anonymous> (/Users/miguemartelo/Dev/Projects/expense-tracker/infra/bin/app.ts:11:2)",
+        "...node internals, tsx..."
+      ]
+    }
+  ],
+  "/ExpenseTrackerStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ]
+}

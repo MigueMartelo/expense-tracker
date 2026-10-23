@@ -4,6 +4,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY backend/package.json backend/
 COPY frontend/package.json frontend/
+COPY infra/package.json infra/
 RUN npm ci --workspace=backend --ignore-scripts
 COPY backend/ backend/
 WORKDIR /app/backend
@@ -15,6 +16,7 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 COPY package.json package-lock.json ./
 COPY backend/package.json backend/
 COPY frontend/package.json frontend/
+COPY infra/package.json infra/
 RUN npm ci --workspace=backend --omit=dev --ignore-scripts && npm cache clean --force
 COPY backend/prisma.config.ts backend/
 COPY backend/src/prisma backend/src/prisma

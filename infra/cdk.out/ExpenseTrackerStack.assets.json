@@ -1,0 +1,21 @@
+{
+  "version": "55.0.0",
+  "files": {
+    "a270ac548e61924459f84be9e86a173396ec0256700f32aa71aa870ce0c28f4e": {
+      "displayName": "ExpenseTrackerStack Template",
+      "source": {
+        "path": "ExpenseTrackerStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "502161982255-us-east-2-400f194c": {
+          "bucketName": "cdk-hnb659fds-assets-502161982255-us-east-2",
+          "objectKey": "a270ac548e61924459f84be9e86a173396ec0256700f32aa71aa870ce0c28f4e.json",
+          "region": "us-east-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::502161982255:role/cdk-hnb659fds-file-publishing-role-502161982255-us-east-2"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

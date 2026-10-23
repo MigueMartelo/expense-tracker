@@ -5,3 +5,5 @@
 plans
 frontend/*
 !frontend/package.json
+infra/*
+!infra/package.json
