@@ -9,7 +9,7 @@ import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 
 const SSM_PATH = '/expense-tracker/prod/'
-const IMAGE_TAG = 'v1' // bump this when you push a new image
+const IMAGE_TAG = process.env.IMAGE_TAG // set by script/deploy.sh
 
 export class ExpenseStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -19,6 +19,10 @@ export class ExpenseStack extends Stack {
     const originSecret = process.env.ORIGIN_VERIFY_SECRET
     if (!originSecret) {
       throw new Error('Set ORIGIN_VERIFY_SECRET before running cdk')
+    }
+
+    if(!IMAGE_TAG) {
+      throw new Error('Set IMAGE_TAG before running cdk')
     }
 
     // ---------- Backend ----------
