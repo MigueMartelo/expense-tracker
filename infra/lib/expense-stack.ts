@@ -4,6 +4,9 @@ import * as ecr from 'aws-cdk-lib/aws-ecr'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as logs from 'aws-cdk-lib/aws-logs'
 import * as iam from 'aws-cdk-lib/aws-iam'
+import * as s3 from 'aws-cdk-lib/aws-s3'
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 
 const SSM_PATH = '/expense-tracker/prod/'
 const IMAGE_TAG = 'v1' // bump this when you push a new image
@@ -12,8 +15,13 @@ export class ExpenseStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    // Where the Lambda container image lives.
-    // Keeping only the last 3 images keeps storage (the main cost) near zero.
+    // Same value that is stored in SSM; passed in at deploy time.
+    const originSecret = process.env.ORIGIN_VERIFY_SECRET
+    if (!originSecret) {
+      throw new Error('Set ORIGIN_VERIFY_SECRET before running cdk')
+    }
+
+    // ---------- Backend ----------
     const repo = new ecr.Repository(this, 'ApiRepo', {
       repositoryName: 'expense-tracker-api',
       imageScanOnPush: true,
@@ -22,7 +30,6 @@ export class ExpenseStack extends Stack {
       lifecycleRules: [{ maxImageCount: 3 }],
     })
 
-    // Logs expire after 30 days so they never become a cost.
     const logGroup = new logs.LogGroup(this, 'ApiLogs', {
       retention: logs.RetentionDays.ONE_MONTH,
       removalPolicy: RemovalPolicy.DESTROY,
@@ -36,13 +43,9 @@ export class ExpenseStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(29),
       logGroup,
-      environment: {
-        SSM_PATH,
-        NODE_ENV: 'production',
-      },
+      environment: { SSM_PATH, NODE_ENV: 'production' },
     })
 
-    // The function reads its secrets from SSM at cold start.
     api.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ['ssm:GetParametersByPath', 'ssm:GetParameters'],
@@ -53,12 +56,60 @@ export class ExpenseStack extends Stack {
       }),
     )
 
-    // Public URL, but the app rejects any request without the secret header
-    // that only CloudFront will add (x-origin-verify).
     const url = api.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
     })
 
+    // ---------- Frontend ----------
+    // Private bucket: only CloudFront can read it (Origin Access Control).
+    const siteBucket = new s3.Bucket(this, 'SiteBucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      enforceSSL: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    })
+
+    // SPA routing: any path without a file extension serves index.html.
+    const spaRewrite = new cloudfront.Function(this, 'SpaRewrite', {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var request = event.request;
+  if (request.uri.indexOf('.') === -1) {
+    request.uri = '/index.html';
+  }
+  return request;
+}`),
+    })
+
+    // ---------- CloudFront: single entry point ----------
+    const cdn = new cloudfront.Distribution(this, 'Cdn', {
+      defaultRootObject: 'index.html',
+      priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
+      defaultBehavior: {
+        origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        functionAssociations: [
+          { function: spaRewrite, eventType: cloudfront.FunctionEventType.VIEWER_REQUEST },
+        ],
+      },
+      additionalBehaviors: {
+        '/api/*': {
+          origin: new origins.FunctionUrlOrigin(url, {
+            customHeaders: { 'x-origin-verify': originSecret },
+          }),
+          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+          allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+          cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+        },
+      },
+    })
+
     new CfnOutput(this, 'ApiUrl', { value: url.url })
+    new CfnOutput(this, 'SiteUrl', { value: `https://${cdn.distributionDomainName}` })
+    new CfnOutput(this, 'SiteBucketName', { value: siteBucket.bucketName })
+    new CfnOutput(this, 'DistributionId', { value: cdn.distributionId })
   }
 }
