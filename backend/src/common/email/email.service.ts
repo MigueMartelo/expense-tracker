@@ -13,7 +13,7 @@ interface PasswordResetEmailParams {
 
 @Injectable()
 export class EmailService {
-  private readonly resend: Resend;
+  private readonly resend?: Resend;
   private readonly logger = new Logger(EmailService.name);
   private readonly fromEmail: string;
 
@@ -24,7 +24,7 @@ export class EmailService {
         'RESEND_API_KEY not configured. Email sending will be disabled.',
       );
     }
-    this.resend = new Resend(apiKey);
+    this.resend = apiKey ? new Resend(apiKey) : undefined;
     
     // Use configured from email or default to resend.dev for testing
     this.fromEmail = this.configService.get<string>('EMAIL_FROM') 
@@ -140,6 +140,11 @@ ${templates.ignoreMessage}
 ---
 ${templates.footer}
     `.trim();
+
+    if (!this.resend) {
+      this.logger.warn('Email sending is disabled (RESEND_API_KEY missing)');
+      return false;
+    }
 
     try {
       const { data, error } = await this.resend.emails.send({
