@@ -2,7 +2,7 @@
 
 Full-stack expense tracking application.
 
-> **Status:** this branch deploys the whole app to AWS. The production site on my own domain still runs on Vercel until I move the DNS record. The Vercel files stay in the repo until then.
+> **Status:** production runs on AWS at https://expensestrack.miguemartelo.dev. The old Vercel setup files (`backend/api/index.ts`, `vercel.json` and others) are still in the repo and will be removed after a stable period.
 
 ## ✨ Features
 
@@ -142,6 +142,8 @@ One-time setup:
 
 Also create `/expense-tracker/infra/ALERT_EMAIL` (String). The alarms send email to that address.
 
+For a custom domain, request an ACM certificate in `us-east-1` (CloudFront only accepts certificates from that region), validate it with the DNS record ACM gives you, and store its ARN in `/expense-tracker/infra/CERT_ARN`. When that parameter exists, `deploy.sh` adds the domain and the certificate to the CloudFront distribution.
+
 Then deploy:
 
 ```bash
@@ -165,4 +167,4 @@ To remove everything, run `cdk destroy` from `infra/`. The stack needs its envir
 - **Database migrations are not part of `deploy.sh`.** They run in a separate GitHub workflow. Run migrations before deploying code that depends on them.
 - **The origin secret is visible in the CloudFormation template.** CloudFront custom headers cannot reference a `SecureString`. Only people with access to the AWS account can see it.
 - **Cross-region database.** Neon runs in `us-east-1` and the Lambda in `us-east-2`, which adds roughly 10-15 ms per query.
-- **No custom domain on AWS yet.** It needs an ACM certificate in `us-east-1` and a DNS change.
+- **Moving the domain from Vercel caused a short downtime.** ACM checks CAA records before issuing a certificate, and it follows CNAMEs. While `expensestrack` was a CNAME to Vercel, the CAA records of Vercel's zone applied and did not allow Amazon, so the first certificate failed with `CAA_ERROR`. The fix was to point the CNAME to CloudFront first, wait for the DNS cache to expire, and then request the certificate. A zero-downtime move would need a different hostname for the new site.
