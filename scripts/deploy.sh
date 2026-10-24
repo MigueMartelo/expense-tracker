@@ -36,6 +36,10 @@ deploy_backend() {
     --query Parameter.Value --output text)
   export ALERT_EMAIL
 
+  CERT_ARN=$(aws ssm get-parameter --name /expense-tracker/infra/CERT_ARN \
+  --query Parameter.Value --output text 2>/dev/null || true)
+  if [ -n "$CERT_ARN" ]; then export CERT_ARN; fi
+
   (cd infra && npx cdk deploy)
 }
 

@@ -11,6 +11,7 @@ import * as sns from 'aws-cdk-lib/aws-sns'
 import * as subscriptions from 'aws-cdk-lib/aws-sns-subscriptions'
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch'
 import * as cwActions from 'aws-cdk-lib/aws-cloudwatch-actions'
+import * as acm from 'aws-cdk-lib/aws-certificatemanager'
 
 const SSM_PATH = '/expense-tracker/prod/'
 const IMAGE_TAG = process.env.IMAGE_TAG // set by script/deploy.sh
@@ -100,6 +101,12 @@ function handler(event) {
     const cdn = new cloudfront.Distribution(this, 'Cdn', {
       defaultRootObject: 'index.html',
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
+      ...(process.env.CERT_ARN
+      ? {
+          domainNames: ['expensestrack.miguemartelo.dev'],
+          certificate: acm.Certificate.fromCertificateArn(this, 'SiteCert', process.env.CERT_ARN),
+        }
+      : {}),
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
