@@ -105,6 +105,10 @@ export class BudgetService {
     const budget = await this.findOne(budgetId, userId);
     this.assertNotArchived(budget);
 
+    if (createBudgetItemDto.categoryId) {
+      await this.assertCategoryOwned(createBudgetItemDto.categoryId, userId);
+    }
+
     return this.prisma.budgetItem.create({
       data: {
         budgetId: budget.id,
@@ -119,6 +123,17 @@ export class BudgetService {
   private assertNotArchived(budget: { archivedAt: Date | null }) {
     if (budget.archivedAt) {
       throw new ConflictException('Archived budgets cannot be modified');
+    }
+  }
+
+  private async assertCategoryOwned(categoryId: string, userId: string) {
+    const category = await this.prisma.category.findFirst({
+      where: { id: categoryId, userId },
+      select: { id: true },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${categoryId} not found`);
     }
   }
 
@@ -191,6 +206,7 @@ export class BudgetService {
 
     if (updateBudgetItemDto.categoryId !== undefined) {
       if (updateBudgetItemDto.categoryId) {
+        await this.assertCategoryOwned(updateBudgetItemDto.categoryId, userId);
         updateData.category = {
           connect: { id: updateBudgetItemDto.categoryId },
         };
