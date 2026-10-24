@@ -7,6 +7,10 @@ import * as iam from 'aws-cdk-lib/aws-iam'
 import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
+import * as sns from 'aws-cdk-lib/aws-sns'
+import * as subscriptions from 'aws-cdk-lib/aws-sns-subscriptions'
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch'
+import * as cwActions from 'aws-cdk-lib/aws-cloudwatch-actions'
 
 const SSM_PATH = '/expense-tracker/prod/'
 const IMAGE_TAG = process.env.IMAGE_TAG // set by script/deploy.sh
@@ -23,6 +27,11 @@ export class ExpenseStack extends Stack {
 
     if(!IMAGE_TAG) {
       throw new Error('Set IMAGE_TAG before running cdk')
+    }
+
+    const alertEmail = process.env.ALERT_EMAIL
+    if (!alertEmail) {
+      throw new Error('Set ALERT_EMAIL before running cdk')
     }
 
     // ---------- Backend ----------
@@ -110,6 +119,35 @@ function handler(event) {
         },
       },
     })
+
+        // ---------- Alerts ----------
+    const alertTopic = new sns.Topic(this, 'AlertTopic')
+    alertTopic.addSubscription(new subscriptions.EmailSubscription(alertEmail))
+    const alarmAction = new cwActions.SnsAction(alertTopic)
+
+    // 1) Lambda-level failures (crashes, timeouts)
+    new cloudwatch.Alarm(this, 'LambdaErrorsAlarm', {
+      alarmDescription: 'The API Lambda reported errors',
+      metric: api.metricErrors({ period: Duration.minutes(5) }),
+      threshold: 1,
+      evaluationPeriods: 1,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    }).addAlarmAction(alarmAction)
+
+    // 2) Application-level errors written to the logs
+    const appErrors = logGroup.addMetricFilter('AppErrorsFilter', {
+      metricNamespace: 'ExpenseTracker',
+      metricName: 'AppErrors',
+      filterPattern: logs.FilterPattern.anyTerm('ERROR', 'Task timed out'),
+      metricValue: '1',
+    })
+    new cloudwatch.Alarm(this, 'AppErrorsAlarm', {
+      alarmDescription: 'ERROR lines found in the API logs',
+      metric: appErrors.metric({ statistic: 'Sum', period: Duration.minutes(5) }),
+      threshold: 1,
+      evaluationPeriods: 1,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    }).addAlarmAction(alarmAction)
 
     new CfnOutput(this, 'ApiUrl', { value: url.url })
     new CfnOutput(this, 'SiteUrl', { value: `https://${cdn.distributionDomainName}` })

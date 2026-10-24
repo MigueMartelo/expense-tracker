@@ -31,6 +31,11 @@ deploy_backend() {
     --with-decryption --query Parameter.Value --output text)
   export ORIGIN_VERIFY_SECRET
   export IMAGE_TAG="$tag"
+
+  ALERT_EMAIL=$(aws ssm get-parameter --name /expense-tracker/infra/ALERT_EMAIL \
+    --query Parameter.Value --output text)
+  export ALERT_EMAIL
+
   (cd infra && npx cdk deploy)
 }
 
