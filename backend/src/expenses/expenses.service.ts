@@ -18,7 +18,39 @@ export interface ExpenseFilters {
 export class ExpensesService {
   constructor(private prisma: PrismaService) {}
 
+  private async assertRelationsOwned(
+    userId: string,
+    {
+      creditCardId,
+      categoryId,
+    }: { creditCardId?: string; categoryId?: string },
+  ) {
+    if (creditCardId) {
+      const creditCard = await this.prisma.creditCard.findFirst({
+        where: { id: creditCardId, userId },
+        select: { id: true },
+      });
+      if (!creditCard) {
+        throw new NotFoundException(
+          `Credit card with ID ${creditCardId} not found`,
+        );
+      }
+    }
+
+    if (categoryId) {
+      const category = await this.prisma.category.findFirst({
+        where: { id: categoryId, userId },
+        select: { id: true },
+      });
+      if (!category) {
+        throw new NotFoundException(`Category with ID ${categoryId} not found`);
+      }
+    }
+  }
+
   async create(userId: string, createExpenseDto: CreateExpenseDto) {
+    await this.assertRelationsOwned(userId, createExpenseDto);
+
     return this.prisma.expense.create({
       data: {
         userId,
@@ -86,6 +118,7 @@ export class ExpensesService {
   async update(id: string, userId: string, updateExpenseDto: UpdateExpenseDto) {
     // Verify ownership
     await this.findOne(id, userId);
+    await this.assertRelationsOwned(userId, updateExpenseDto);
 
     const updateData: Prisma.ExpenseUpdateInput = {};
     if (updateExpenseDto.type) updateData.type = updateExpenseDto.type;

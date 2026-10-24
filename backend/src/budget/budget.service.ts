@@ -20,6 +20,17 @@ export class BudgetService {
     });
   }
 
+  private async assertCategoryOwned(categoryId: string, userId: string) {
+    const category = await this.prisma.category.findFirst({
+      where: { id: categoryId, userId },
+      select: { id: true },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${categoryId} not found`);
+    }
+  }
+
   async getBudget(userId: string) {
     const budget = await this.prisma.budget.findUnique({
       where: { userId },
@@ -47,6 +58,10 @@ export class BudgetService {
   }
 
   async createItem(userId: string, createBudgetItemDto: CreateBudgetItemDto) {
+    if (createBudgetItemDto.categoryId) {
+      await this.assertCategoryOwned(createBudgetItemDto.categoryId, userId);
+    }
+
     const budget = await this.ensureBudget(userId);
 
     return this.prisma.budgetItem.create({
@@ -71,7 +86,9 @@ export class BudgetService {
     }
 
     if (item.budget.userId !== userId) {
-      throw new ForbiddenException('You do not have access to this budget item');
+      throw new ForbiddenException(
+        'You do not have access to this budget item',
+      );
     }
 
     return item;
@@ -96,6 +113,7 @@ export class BudgetService {
 
     if (updateBudgetItemDto.categoryId !== undefined) {
       if (updateBudgetItemDto.categoryId) {
+        await this.assertCategoryOwned(updateBudgetItemDto.categoryId, userId);
         updateData.category = {
           connect: { id: updateBudgetItemDto.categoryId },
         };
