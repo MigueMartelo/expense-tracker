@@ -17,7 +17,7 @@ model User {
   expenses       Expense[]
   creditCards    CreditCard[]
   categories     Category[]
-  budget         Budget?
+  budgets        Budget[]
   passwordResets PasswordReset[]
 
   @@map("users")
@@ -78,7 +78,7 @@ model Category {
 
 model Budget {
   id         String       @id @default(uuid())
-  userId     String       @unique @map("user_id")
+  userId     String       @map("user_id")
   name       String       @default("Presupuesto mensual")
   archivedAt DateTime?    @map("archived_at")
   createdAt  DateTime     @default(now()) @map("created_at")
@@ -86,6 +86,7 @@ model Budget {
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   items      BudgetItem[]
 
+  @@index([userId])
   @@map("budgets")
 }
 
