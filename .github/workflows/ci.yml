@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      # Prisma needs a value to load its config; nothing connects to it.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Backend build
+        run: |
+          npx prisma generate
+          npm run build
+        working-directory: backend
+
+      - name: Frontend tests
+        run: npm test -w frontend
+
+      - name: Frontend build (SPA)
+        run: npm run build:spa -w frontend
+
+      - name: Infra type check
+        run: npx tsc --noEmit
+        working-directory: infra
+
+      - name: CDK synth
+        run: npx cdk synth --quiet
+        working-directory: infra
+        env:
+          ORIGIN_VERIFY_SECRET: ci
+          IMAGE_TAG: ci
+          ALERT_EMAIL: ci@example.com
+
+      - name: Build the Lambda image
+        run: docker build -f backend/Dockerfile -t expense-api .
