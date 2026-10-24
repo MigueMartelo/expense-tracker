@@ -1,23 +1,129 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateBudgetDto } from './dto/create-budget.dto';
 import { CreateBudgetItemDto } from './dto/create-budget-item.dto';
+import { UpdateBudgetDto } from './dto/update-budget.dto';
 import { UpdateBudgetItemDto } from './dto/update-budget-item.dto';
+
+const budgetWithItems = {
+  items: {
+    include: { category: true },
+    orderBy: { createdAt: 'asc' },
+  },
+} satisfies Prisma.BudgetInclude;
 
 @Injectable()
 export class BudgetService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async ensureBudget(userId: string) {
-    return this.prisma.budget.upsert({
-      where: { userId },
-      update: {},
-      create: { userId },
+  async list(userId: string, archived = false) {
+    const budgets = await this.prisma.budget.findMany({
+      where: { userId, archivedAt: archived ? { not: null } : null },
+      include: { _count: { select: { items: true } } },
+      orderBy: { createdAt: 'asc' },
     });
+
+    const totals = await this.prisma.budgetItem.groupBy({
+      by: ['budgetId'],
+      where: { budgetId: { in: budgets.map((budget) => budget.id) } },
+      _sum: { amount: true },
+    });
+    const totalByBudget = new Map(
+      totals.map((total) => [total.budgetId, total._sum.amount]),
+    );
+
+    return budgets.map(({ _count, ...budget }) => ({
+      ...budget,
+      itemCount: _count.items,
+      total: totalByBudget.get(budget.id)?.toNumber() ?? 0,
+    }));
+  }
+
+  async findOne(id: string, userId: string) {
+    const budget = await this.prisma.budget.findUnique({
+      where: { id },
+      include: budgetWithItems,
+    });
+
+    if (!budget) {
+      throw new NotFoundException(`Budget with ID ${id} not found`);
+    }
+
+    if (budget.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this budget');
+    }
+
+    return budget;
+  }
+
+  create(userId: string, createBudgetDto: CreateBudgetDto) {
+    return this.prisma.budget.create({
+      data: { userId, name: createBudgetDto.name },
+      include: budgetWithItems,
+    });
+  }
+
+  async update(id: string, userId: string, updateBudgetDto: UpdateBudgetDto) {
+    await this.findOne(id, userId);
+
+    const updateData: Prisma.BudgetUpdateInput = {};
+
+    if (updateBudgetDto.name !== undefined) {
+      updateData.name = updateBudgetDto.name;
+    }
+
+    if (updateBudgetDto.archived !== undefined) {
+      updateData.archivedAt = updateBudgetDto.archived ? new Date() : null;
+    }
+
+    return this.prisma.budget.update({
+      where: { id },
+      data: updateData,
+      include: budgetWithItems,
+    });
+  }
+
+  async remove(id: string, userId: string) {
+    await this.findOne(id, userId);
+
+    return this.prisma.budget.delete({
+      where: { id },
+    });
+  }
+
+  async createItemInBudget(
+    budgetId: string,
+    userId: string,
+    createBudgetItemDto: CreateBudgetItemDto,
+  ) {
+    const budget = await this.findOne(budgetId, userId);
+    this.assertNotArchived(budget);
+
+    if (createBudgetItemDto.categoryId) {
+      await this.assertCategoryOwned(createBudgetItemDto.categoryId, userId);
+    }
+
+    return this.prisma.budgetItem.create({
+      data: {
+        budgetId: budget.id,
+        item: createBudgetItemDto.item,
+        amount: createBudgetItemDto.amount,
+        categoryId: createBudgetItemDto.categoryId ?? null,
+      },
+      include: { category: true },
+    });
+  }
+
+  private assertNotArchived(budget: { archivedAt: Date | null }) {
+    if (budget.archivedAt) {
+      throw new ConflictException('Archived budgets cannot be modified');
+    }
   }
 
   private async assertCategoryOwned(categoryId: string, userId: string) {
@@ -31,15 +137,14 @@ export class BudgetService {
     }
   }
 
-  async getBudget(userId: string) {
-    const budget = await this.prisma.budget.findUnique({
+  // Legacy single-budget API (GET /budget, POST /budget/items), kept until the
+  // frontend moves to /budgets. It targets the user's oldest budget and does
+  // not rely on budgets.user_id being unique.
+  private async findOrCreateLegacyBudget(userId: string) {
+    const budget = await this.prisma.budget.findFirst({
       where: { userId },
-      include: {
-        items: {
-          include: { category: true },
-          orderBy: { createdAt: 'asc' },
-        },
-      },
+      orderBy: { createdAt: 'asc' },
+      include: budgetWithItems,
     });
 
     if (budget) {
@@ -48,31 +153,18 @@ export class BudgetService {
 
     return this.prisma.budget.create({
       data: { userId },
-      include: {
-        items: {
-          include: { category: true },
-          orderBy: { createdAt: 'asc' },
-        },
-      },
+      include: budgetWithItems,
     });
   }
 
+  getBudget(userId: string) {
+    return this.findOrCreateLegacyBudget(userId);
+  }
+
   async createItem(userId: string, createBudgetItemDto: CreateBudgetItemDto) {
-    if (createBudgetItemDto.categoryId) {
-      await this.assertCategoryOwned(createBudgetItemDto.categoryId, userId);
-    }
+    const budget = await this.findOrCreateLegacyBudget(userId);
 
-    const budget = await this.ensureBudget(userId);
-
-    return this.prisma.budgetItem.create({
-      data: {
-        budgetId: budget.id,
-        item: createBudgetItemDto.item,
-        amount: createBudgetItemDto.amount,
-        categoryId: createBudgetItemDto.categoryId ?? null,
-      },
-      include: { category: true },
-    });
+    return this.createItemInBudget(budget.id, userId, createBudgetItemDto);
   }
 
   private async findItem(id: string, userId: string) {
@@ -99,7 +191,8 @@ export class BudgetService {
     userId: string,
     updateBudgetItemDto: UpdateBudgetItemDto,
   ) {
-    await this.findItem(id, userId);
+    const item = await this.findItem(id, userId);
+    this.assertNotArchived(item.budget);
 
     const updateData: Prisma.BudgetItemUpdateInput = {};
 
@@ -130,7 +223,8 @@ export class BudgetService {
   }
 
   async removeItem(id: string, userId: string) {
-    await this.findItem(id, userId);
+    const item = await this.findItem(id, userId);
+    this.assertNotArchived(item.budget);
 
     return this.prisma.budgetItem.delete({
       where: { id },
