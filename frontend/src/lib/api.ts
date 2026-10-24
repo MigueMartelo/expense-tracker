@@ -14,6 +14,9 @@ import type {
   UpdateCategoryDto,
   Budget,
   BudgetItem,
+  BudgetSummary,
+  CreateBudgetDto,
+  UpdateBudgetDto,
   CreateBudgetItemDto,
   UpdateBudgetItemDto,
 } from '../types';
@@ -237,6 +240,62 @@ export const budgetApi = {
   },
   deleteItem: async (id: string): Promise<BudgetItem> => {
     return apiRequest<BudgetItem>(`/budget/items/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// Budgets API (multiple budgets per user)
+export const budgetKeys = {
+  all: ['budgets'] as const,
+  list: (archived: boolean) => ['budgets', { archived }] as const,
+  detail: (id: string) => ['budgets', id] as const,
+};
+
+export const budgetsApi = {
+  list: async (archived = false): Promise<BudgetSummary[]> => {
+    return apiRequest<BudgetSummary[]>(`/budgets?archived=${archived}`);
+  },
+  get: async (id: string): Promise<Budget> => {
+    return apiRequest<Budget>(`/budgets/${id}`);
+  },
+  create: async (data: CreateBudgetDto): Promise<Budget> => {
+    return apiRequest<Budget>('/budgets', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  update: async (id: string, data: UpdateBudgetDto): Promise<Budget> => {
+    return apiRequest<Budget>(`/budgets/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  },
+  remove: async (id: string): Promise<Omit<Budget, 'items'>> => {
+    return apiRequest<Omit<Budget, 'items'>>(`/budgets/${id}`, {
+      method: 'DELETE',
+    });
+  },
+  createItem: async (
+    budgetId: string,
+    data: CreateBudgetItemDto
+  ): Promise<BudgetItem> => {
+    return apiRequest<BudgetItem>(`/budgets/${budgetId}/items`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  updateItem: async (
+    itemId: string,
+    data: UpdateBudgetItemDto
+  ): Promise<BudgetItem> => {
+    return apiRequest<BudgetItem>(`/budgets/items/${itemId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  },
+  deleteItem: async (itemId: string): Promise<BudgetItem> => {
+    return apiRequest<BudgetItem>(`/budgets/items/${itemId}`, {
       method: 'DELETE',
     });
   },
