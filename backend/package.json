@@ -24,7 +24,8 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@nestjs/cli": "^11.0.0",
+    "@aws-sdk/client-ssm": "^3.1156.0",
+    "@codegenie/serverless-express": "^4.17.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -32,7 +33,6 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
-    "@nestjs/typeorm": "^11.0.0",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "bcrypt": "^6.0.0",
@@ -44,15 +44,15 @@
     "prisma": "^7.2.0",
     "reflect-metadata": "^0.2.2",
     "resend": "^6.9.1",
-    "rxjs": "^7.8.1",
-    "typeorm": "^0.3.28",
-    "typescript": "^5.7.3"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
+    "@nestjs/cli": "^11.0.14",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
+    "@types/aws-lambda": "^8.10.164",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
@@ -72,6 +72,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "typescript": "~5.9.3",
     "typescript-eslint": "^8.20.0"
   },
   "jest": {

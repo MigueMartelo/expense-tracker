@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite dev --port 5173",
     "build": "vite build",
+    "build:spa": "SPA_BUILD=1 VITE_API_URL=/api vite build",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
     "test": "vitest run --config vitest.config.ts"

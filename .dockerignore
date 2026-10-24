@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/.env
+.git
+plans
+frontend/*
+!frontend/package.json
+infra/*
+!infra/package.json
