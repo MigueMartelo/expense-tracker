@@ -244,7 +244,11 @@
     "noBudgetsYet": "Aún no tienes presupuestos",
     "createFirstBudget": "Crea tu primer presupuesto para empezar a planificar.",
     "noArchivedBudgets": "No hay presupuestos archivados",
-    "noArchivedBudgetsHint": "Los presupuestos que archives aparecerán aquí."
+    "noArchivedBudgetsHint": "Los presupuestos que archives aparecerán aquí.",
+    "budgetNotFound": "Presupuesto no encontrado",
+    "budgetNotFoundHint": "No existe o no tienes acceso a él.",
+    "backToBudgets": "Volver a presupuestos",
+    "archivedBanner": "Este presupuesto está archivado. Restáuralo para volver a editar sus ítems."
   },
   "footer": {
     "copyright": "© {{year}} Rastreador de Gastos",

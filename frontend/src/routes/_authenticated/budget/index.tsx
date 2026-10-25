@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { budgetKeys, budgetsApi } from '@/lib/api';
@@ -16,6 +16,7 @@ export const Route = createFileRoute('/_authenticated/budget/')({
 
 function BudgetsPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [archived, setArchived] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -85,9 +86,14 @@ function BudgetsPage() {
       ) : (
         <div className='space-y-3'>
           {budgets?.map((budget) => (
-            // TODO(BUD-07): wrap in <Link to='/budget/$id' params={{ id: budget.id }}>
-            // once the detail route exists.
-            <BudgetCard key={budget.id} budget={budget} />
+            <Link
+              key={budget.id}
+              to='/budget/$id'
+              params={{ id: budget.id }}
+              className='block'
+            >
+              <BudgetCard budget={budget} />
+            </Link>
           ))}
 
           {/* Empty State */}
@@ -139,9 +145,9 @@ function BudgetsPage() {
       <BudgetDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        // TODO(BUD-07): navigate({ to: '/budget/$id', params: { id: budget.id } })
-        // once the detail route exists; until then the new budget shows up in the list.
-        onCreated={() => setArchived(false)}
+        onCreated={(budget) =>
+          navigate({ to: '/budget/$id', params: { id: budget.id } })
+        }
       />
     </div>
   );

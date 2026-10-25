@@ -244,7 +244,11 @@
     "noBudgetsYet": "No budgets yet",
     "createFirstBudget": "Create your first budget to start planning.",
     "noArchivedBudgets": "No archived budgets",
-    "noArchivedBudgetsHint": "Budgets you archive will show up here."
+    "noArchivedBudgetsHint": "Budgets you archive will show up here.",
+    "budgetNotFound": "Budget not found",
+    "budgetNotFoundHint": "It doesn't exist or you don't have access to it.",
+    "backToBudgets": "Back to budgets",
+    "archivedBanner": "This budget is archived. Restore it to edit its items again."
   },
   "footer": {
     "copyright": "© {{year}} Expense Tracker",
