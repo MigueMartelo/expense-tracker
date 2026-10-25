@@ -28,10 +28,16 @@ jobs:
 
       - run: npm ci
 
+      - name: Prisma generate
+        run: npx prisma generate
+        working-directory: backend
+
+      - name: Backend tests
+        run: npm test
+        working-directory: backend
+
       - name: Backend build
-        run: |
-          npx prisma generate
-          npm run build
+        run: npm run build
         working-directory: backend
 
       - name: Frontend tests
