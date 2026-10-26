@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/dialog';
 import { BudgetItemForm } from './BudgetItemForm';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { budgetApi } from '@/lib/api';
+import { budgetKeys, budgetsApi } from '@/lib/api';
 import { toast } from 'sonner';
 import type { BudgetItem, CreateBudgetItemDto } from '@/types';
 import { useTranslation } from 'react-i18next';
@@ -14,21 +14,24 @@ import { useTranslation } from 'react-i18next';
 interface BudgetItemDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  budgetId: string;
   budgetItem?: BudgetItem;
 }
 
 export function BudgetItemDialog({
   open,
   onOpenChange,
+  budgetId,
   budgetItem,
 }: BudgetItemDialogProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: budgetApi.createItem,
+    mutationFn: (data: CreateBudgetItemDto) =>
+      budgetsApi.createItem(budgetId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budget'] });
+      queryClient.invalidateQueries({ queryKey: budgetKeys.all });
       toast.success(t('budget.itemAddedSuccess'));
       onOpenChange(false);
     },
@@ -39,9 +42,9 @@ export function BudgetItemDialog({
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: CreateBudgetItemDto }) =>
-      budgetApi.updateItem(id, data),
+      budgetsApi.updateItem(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budget'] });
+      queryClient.invalidateQueries({ queryKey: budgetKeys.all });
       toast.success(t('budget.itemUpdatedSuccess'));
       onOpenChange(false);
     },

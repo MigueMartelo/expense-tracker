@@ -17,6 +17,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics/index'
 import { Route as AuthenticatedBudgetIndexRouteImport } from './routes/_authenticated/budget/index'
+import { Route as AuthenticatedBudgetIdRouteImport } from './routes/_authenticated/budget/$id'
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedCreditCardsIndexRouteImport } from './routes/_authenticated/credit-cards/index'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses/index'
@@ -65,6 +66,11 @@ const AuthenticatedBudgetIndexRoute =
     path: '/budget/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedBudgetIdRoute = AuthenticatedBudgetIdRouteImport.update({
+  id: '/budget/$id',
+  path: '/budget/$id',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedCategoriesIndexRoute =
   AuthenticatedCategoriesIndexRouteImport.update({
     id: '/categories/',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/budget/$id': typeof AuthenticatedBudgetIdRoute
   '/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/expenses/history': typeof AuthenticatedExpensesHistoryRoute
   '/expenses/new': typeof AuthenticatedExpensesNewRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/budget/$id': typeof AuthenticatedBudgetIdRoute
   '/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/expenses/history': typeof AuthenticatedExpensesHistoryRoute
   '/expenses/new': typeof AuthenticatedExpensesNewRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/budget/$id': typeof AuthenticatedBudgetIdRoute
   '/_authenticated/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/_authenticated/expenses/history': typeof AuthenticatedExpensesHistoryRoute
   '/_authenticated/expenses/new': typeof AuthenticatedExpensesNewRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/budget/$id'
     | '/expenses/$id'
     | '/expenses/history'
     | '/expenses/new'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/budget/$id'
     | '/expenses/$id'
     | '/expenses/history'
     | '/expenses/new'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/_authenticated/budget/$id'
     | '/_authenticated/expenses/$id'
     | '/_authenticated/expenses/history'
     | '/_authenticated/expenses/new'
@@ -264,6 +276,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBudgetIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/budget/$id': {
+      id: '/_authenticated/budget/$id'
+      path: '/budget/$id'
+      fullPath: '/budget/$id'
+      preLoaderRoute: typeof AuthenticatedBudgetIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/categories/': {
       id: '/_authenticated/categories/'
       path: '/categories'
@@ -310,6 +329,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedBudgetIdRoute: typeof AuthenticatedBudgetIdRoute
   AuthenticatedExpensesIdRoute: typeof AuthenticatedExpensesIdRoute
   AuthenticatedExpensesHistoryRoute: typeof AuthenticatedExpensesHistoryRoute
   AuthenticatedExpensesNewRoute: typeof AuthenticatedExpensesNewRoute
@@ -321,6 +341,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedBudgetIdRoute: AuthenticatedBudgetIdRoute,
   AuthenticatedExpensesIdRoute: AuthenticatedExpensesIdRoute,
   AuthenticatedExpensesHistoryRoute: AuthenticatedExpensesHistoryRoute,
   AuthenticatedExpensesNewRoute: AuthenticatedExpensesNewRoute,
