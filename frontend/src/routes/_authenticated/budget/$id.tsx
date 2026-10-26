@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { budgetKeys, budgetsApi } from '@/lib/api';
@@ -16,12 +16,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { BudgetDialog } from '@/components/budget/BudgetDialog';
 import { BudgetItemDialog } from '@/components/budget/BudgetItemDialog';
 import { CategoryBadge } from '@/components/categories/CategoryBadge';
 import { toast } from 'sonner';
 import type { BudgetItem } from '@/types';
 import {
   Archive,
+  ArchiveRestore,
   ArrowLeft,
   Plus,
   PiggyBank,
@@ -38,8 +40,11 @@ export const Route = createFileRoute('/_authenticated/budget/$id')({
 function BudgetDetailPage() {
   const { t } = useTranslation();
   const { id } = Route.useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [deleteBudgetOpen, setDeleteBudgetOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BudgetItem | undefined>();
   const [deleteItem, setDeleteItem] = useState<BudgetItem | null>(null);
 
@@ -63,6 +68,41 @@ function BudgetDetailPage() {
     },
     onError: (error: Error) => {
       toast.error(error.message || t('budget.deleteItemFailed'));
+    },
+  });
+
+  const archiveMutation = useMutation({
+    mutationFn: (archived: boolean) => budgetsApi.update(id, { archived }),
+    onSuccess: (_, archived) => {
+      queryClient.invalidateQueries({ queryKey: budgetKeys.all });
+      toast.success(
+        archived
+          ? t('budget.budgetArchivedSuccess')
+          : t('budget.budgetRestoredSuccess')
+      );
+    },
+    onError: (error: Error, archived) => {
+      toast.error(
+        error.message ||
+          (archived
+            ? t('budget.archiveBudgetFailed')
+            : t('budget.restoreBudgetFailed'))
+      );
+    },
+  });
+
+  const deleteBudgetMutation = useMutation({
+    mutationFn: () => budgetsApi.remove(id),
+    onSuccess: async () => {
+      toast.success(t('budget.budgetDeletedSuccess'));
+      // Leave the page before refreshing, so the deleted budget isn't
+      // refetched (and shown as "not found") on the way out.
+      await navigate({ to: '/budget' });
+      queryClient.removeQueries({ queryKey: budgetKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: budgetKeys.all });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('budget.deleteBudgetFailed'));
     },
   });
 
@@ -155,23 +195,80 @@ function BudgetDetailPage() {
             </div>
           </div>
         </div>
-        {!isArchived && (
+        <div className='flex items-center gap-1 shrink-0'>
+          {!isArchived && (
+            <Button
+              onClick={() => setDialogOpen(true)}
+              size='sm'
+              className='gap-2 hidden md:flex mr-2'
+            >
+              <Plus className='w-4 h-4' />
+              {t('budget.addItem')}
+            </Button>
+          )}
+          {!isArchived && (
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={() => setRenameOpen(true)}
+              title={t('budget.renameBudget')}
+              aria-label={t('budget.renameBudget')}
+              className='text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 h-11 w-11 sm:h-9 sm:w-9'
+            >
+              <Pencil className='w-4 h-4' />
+            </Button>
+          )}
           <Button
-            onClick={() => setDialogOpen(true)}
-            size='sm'
-            className='gap-2 hidden md:flex shrink-0'
+            variant='ghost'
+            size='icon'
+            onClick={() => archiveMutation.mutate(!isArchived)}
+            disabled={archiveMutation.isPending}
+            title={
+              isArchived
+                ? t('budget.restoreBudget')
+                : t('budget.archiveBudget')
+            }
+            aria-label={
+              isArchived
+                ? t('budget.restoreBudget')
+                : t('budget.archiveBudget')
+            }
+            className='text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 h-11 w-11 sm:h-9 sm:w-9'
           >
-            <Plus className='w-4 h-4' />
-            {t('budget.addItem')}
+            {isArchived ? (
+              <ArchiveRestore className='w-4 h-4' />
+            ) : (
+              <Archive className='w-4 h-4' />
+            )}
           </Button>
-        )}
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => setDeleteBudgetOpen(true)}
+            title={t('budget.deleteBudget')}
+            aria-label={t('budget.deleteBudget')}
+            className='text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 h-11 w-11 sm:h-9 sm:w-9'
+          >
+            <Trash2 className='w-4 h-4' />
+          </Button>
+        </div>
       </div>
 
       {/* Archived banner */}
       {isArchived && (
         <div className='flex items-center gap-3 rounded-lg border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-800 dark:text-amber-300'>
           <Archive className='w-4 h-4 shrink-0' />
-          <p>{t('budget.archivedBanner')}</p>
+          <p className='flex-1'>{t('budget.archivedBanner')}</p>
+          <Button
+            size='sm'
+            variant='outline'
+            onClick={() => archiveMutation.mutate(false)}
+            disabled={archiveMutation.isPending}
+            className='gap-2 shrink-0'
+          >
+            <ArchiveRestore className='w-4 h-4' />
+            {t('budget.restoreBudget')}
+          </Button>
         </div>
       )}
 
@@ -288,7 +385,40 @@ function BudgetDetailPage() {
         budgetItem={editingItem}
       />
 
-      {/* Delete Confirmation */}
+      {/* Rename Budget Dialog */}
+      <BudgetDialog
+        open={renameOpen}
+        onOpenChange={setRenameOpen}
+        budget={budget}
+      />
+
+      {/* Delete Budget Confirmation */}
+      <AlertDialog open={deleteBudgetOpen} onOpenChange={setDeleteBudgetOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('budget.deleteBudget')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('budget.deleteBudgetConfirm', {
+                name: budget.name,
+                count: budget.items.length,
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteBudgetMutation.mutate()}
+              className='bg-red-600 hover:bg-red-700'
+            >
+              {deleteBudgetMutation.isPending
+                ? t('common.deleting')
+                : t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Item Confirmation */}
       <AlertDialog
         open={!!deleteItem}
         onOpenChange={() => setDeleteItem(null)}

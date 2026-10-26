@@ -248,7 +248,18 @@
     "budgetNotFound": "Presupuesto no encontrado",
     "budgetNotFoundHint": "No existe o no tienes acceso a él.",
     "backToBudgets": "Volver a presupuestos",
-    "archivedBanner": "Este presupuesto está archivado. Restáuralo para volver a editar sus ítems."
+    "archivedBanner": "Este presupuesto está archivado. Restáuralo para volver a editar sus ítems.",
+    "archiveBudget": "Archivar presupuesto",
+    "restoreBudget": "Restaurar",
+    "deleteBudget": "Eliminar presupuesto",
+    "deleteBudgetConfirm_one": "¿Seguro que deseas eliminar \"{{name}}\"? También se eliminará su ítem. Esta acción no se puede deshacer.",
+    "deleteBudgetConfirm_other": "¿Seguro que deseas eliminar \"{{name}}\"? También se eliminarán sus {{count}} ítems. Esta acción no se puede deshacer.",
+    "budgetArchivedSuccess": "Presupuesto archivado",
+    "budgetRestoredSuccess": "Presupuesto restaurado",
+    "archiveBudgetFailed": "Error al archivar el presupuesto",
+    "restoreBudgetFailed": "Error al restaurar el presupuesto",
+    "budgetDeletedSuccess": "Presupuesto eliminado exitosamente",
+    "deleteBudgetFailed": "Error al eliminar el presupuesto"
   },
   "footer": {
     "copyright": "© {{year}} Rastreador de Gastos",

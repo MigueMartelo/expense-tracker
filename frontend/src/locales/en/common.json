@@ -248,7 +248,18 @@
     "budgetNotFound": "Budget not found",
     "budgetNotFoundHint": "It doesn't exist or you don't have access to it.",
     "backToBudgets": "Back to budgets",
-    "archivedBanner": "This budget is archived. Restore it to edit its items again."
+    "archivedBanner": "This budget is archived. Restore it to edit its items again.",
+    "archiveBudget": "Archive budget",
+    "restoreBudget": "Restore",
+    "deleteBudget": "Delete budget",
+    "deleteBudgetConfirm_one": "Are you sure you want to delete \"{{name}}\"? Its item will be deleted too. This can't be undone.",
+    "deleteBudgetConfirm_other": "Are you sure you want to delete \"{{name}}\"? Its {{count}} items will be deleted too. This can't be undone.",
+    "budgetArchivedSuccess": "Budget archived",
+    "budgetRestoredSuccess": "Budget restored",
+    "archiveBudgetFailed": "Failed to archive budget",
+    "restoreBudgetFailed": "Failed to restore budget",
+    "budgetDeletedSuccess": "Budget deleted successfully",
+    "deleteBudgetFailed": "Failed to delete budget"
   },
   "footer": {
     "copyright": "© {{year}} Expense Tracker",
