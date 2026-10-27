@@ -218,33 +218,6 @@ export const categoriesApi = {
   },
 };
 
-// Budget API
-export const budgetApi = {
-  get: async (): Promise<Budget> => {
-    return apiRequest<Budget>('/budget');
-  },
-  createItem: async (data: CreateBudgetItemDto): Promise<BudgetItem> => {
-    return apiRequest<BudgetItem>('/budget/items', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-  },
-  updateItem: async (
-    id: string,
-    data: UpdateBudgetItemDto
-  ): Promise<BudgetItem> => {
-    return apiRequest<BudgetItem>(`/budget/items/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    });
-  },
-  deleteItem: async (id: string): Promise<BudgetItem> => {
-    return apiRequest<BudgetItem>(`/budget/items/${id}`, {
-      method: 'DELETE',
-    });
-  },
-};
-
 // Budgets API (multiple budgets per user)
 export const budgetKeys = {
   all: ['budgets'] as const,
