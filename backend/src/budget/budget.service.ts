@@ -137,36 +137,6 @@ export class BudgetService {
     }
   }
 
-  // Legacy single-budget API (GET /budget, POST /budget/items), kept until the
-  // frontend moves to /budgets. It targets the user's oldest budget and does
-  // not rely on budgets.user_id being unique.
-  private async findOrCreateLegacyBudget(userId: string) {
-    const budget = await this.prisma.budget.findFirst({
-      where: { userId },
-      orderBy: { createdAt: 'asc' },
-      include: budgetWithItems,
-    });
-
-    if (budget) {
-      return budget;
-    }
-
-    return this.prisma.budget.create({
-      data: { userId },
-      include: budgetWithItems,
-    });
-  }
-
-  getBudget(userId: string) {
-    return this.findOrCreateLegacyBudget(userId);
-  }
-
-  async createItem(userId: string, createBudgetItemDto: CreateBudgetItemDto) {
-    const budget = await this.findOrCreateLegacyBudget(userId);
-
-    return this.createItemInBudget(budget.id, userId, createBudgetItemDto);
-  }
-
   private async findItem(id: string, userId: string) {
     const item = await this.prisma.budgetItem.findUnique({
       where: { id },

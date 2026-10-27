@@ -4,13 +4,13 @@
 
 **Apps afectadas:** `backend/` (NestJS + Prisma) y `frontend/` (TanStack Start + TanStack Query + shadcn/ui).
 
-**Estado:** Planning aprobado → pendiente de ejecución. Seguimiento en [#13](https://github.com/MigueMartelo/expense-tracker/issues/13).
+**Estado:** Implementado y en producción (octubre 2026). Seguimiento en [#13](https://github.com/MigueMartelo/expense-tracker/issues/13); cambios respecto al plan en §4.
 
 ---
 
 ## 1. Planning
 
-### 1.1 Situación actual
+### 1.1 Situación anterior
 
 - `Budget` tiene `userId @unique` → exactamente un presupuesto por usuario, creado de forma perezosa en `GET /budget` (`backend/src/budget/budget.service.ts`).
 - `BudgetItem` (ítem, monto, categoría opcional) cuelga de ese presupuesto.
@@ -136,3 +136,17 @@ BUD-10 ──merge──▶ deploy backend + frontend
 ```
 
 Los tickets de frontend (BUD-04 → BUD-08) pueden ir en una sola rama/PR si se prefiere un único deploy de frontend.
+
+---
+
+## 4. Notas de implementación
+
+Lo que cambió o se agregó respecto al plan:
+
+- **Usuarios nuevos empiezan sin presupuestos.** Antes `GET /budget` creaba uno al vuelo; con `/budgets` el usuario crea el primero desde el empty state. Los usuarios existentes conservaron el suyo como "Presupuesto mensual".
+- **Migración *contract* (BUD-03):** crea `budgets_user_id_idx` antes de borrar `budgets_user_id_key`, para que `user_id` nunca quede sin índice.
+- **Acciones del detalle (BUD-08):** botones de ícono en el encabezado (renombrar, archivar/restaurar, eliminar) en lugar de un menú, para no sumar una dependencia de Radix. Renombrar se oculta mientras el presupuesto está archivado; eliminar sí se permite.
+- **Archivados:** el backend responde `409` al tocar ítems de un presupuesto archivado y el frontend los muestra en solo lectura con un banner y botón Restaurar.
+- **Seguridad (#27, fuera del plan):** al crear/editar ítems y gastos se valida que la categoría y la tarjeta pertenezcan al usuario (`404` si no).
+- **CI (BUD-09):** el job corre `prisma generate` → tests del backend → build.
+- **Legacy retirado (BUD-10):** se eliminaron `GET /budget`, `POST/PATCH/DELETE /budget/items` y el `budgetApi` del frontend. La ruta de la UI sigue siendo `/budget`.
